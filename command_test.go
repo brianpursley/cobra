@@ -822,6 +822,31 @@ func TestHelpCommandExecutedOnChild(t *testing.T) {
 	checkStringContains(t, output, childCmd.Long)
 }
 
+func TestHelpDisplaysMultiWordRootCommandUsage(t *testing.T) {
+	rootCmd := &Command{Use: "one two", Run: emptyRun}
+	rootCmd.AddCommand(&Command{Use: "child", Run: emptyRun})
+
+	output, err := executeCommand(rootCmd, "help")
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	checkStringContains(t, output, "one two [command]")
+}
+
+func TestHelpCommandExecutedOnChildDisplaysMultiWordRootCommandUsage(t *testing.T) {
+	rootCmd := &Command{Use: "one two", Run: emptyRun}
+	childCmd := &Command{Use: "child", Long: "Long description", Run: emptyRun}
+	rootCmd.AddCommand(childCmd)
+
+	output, err := executeCommand(rootCmd, "help", "child")
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	checkStringContains(t, output, "one two child [flags]")
+}
+
 func TestSetHelpCommand(t *testing.T) {
 	c := &Command{Use: "c", Run: emptyRun}
 	c.AddCommand(&Command{Use: "empty", Run: emptyRun})

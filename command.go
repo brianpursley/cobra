@@ -475,7 +475,7 @@ func (c *Command) UsageTemplate() string {
 	}
 	return `Usage:{{if .Runnable}}
   {{.UseLine}}{{end}}{{if .HasAvailableSubCommands}}
-  {{.CommandPath}} [command]{{end}}{{if gt (len .Aliases) 0}}
+  {{.Root.Use}} [command]{{end}}{{if gt (len .Aliases) 0}}
 
 Aliases:
   {{.NameAndAliases}}{{end}}{{if .HasExample}}
@@ -495,7 +495,7 @@ Global Flags:
 Additional help topics:{{range .Commands}}{{if .IsAdditionalHelpTopicCommand}}
   {{rpad .CommandPath .CommandPathPadding}} {{.Short}}{{end}}{{end}}{{end}}{{if .HasAvailableSubCommands}}
 
-Use "{{.CommandPath}} [command] --help" for more information about a command.{{end}}
+Use "{{.Root.Use}} [command] --help" for more information about a command.{{end}}
 `
 }
 
@@ -1203,7 +1203,7 @@ func (c *Command) CommandPath() string {
 func (c *Command) UseLine() string {
 	var useline string
 	if c.HasParent() {
-		useline = c.parent.CommandPath() + " " + c.Use
+		useline = c.parent.Use + " " + c.Use
 	} else {
 		useline = c.Use
 	}
